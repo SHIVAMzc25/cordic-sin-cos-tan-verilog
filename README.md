@@ -62,7 +62,7 @@ The implementation consists of:
 - Registers for X, Y and Z values
 
 <p align="center">
-<img src="docs/architecture.png" width="700">
+<img src="architecture.png" width="700">
 </p>
 
 ---
@@ -120,7 +120,7 @@ Test cases:
 Example simulation waveform:
 
 <p align="center">
-<img src="docs/waveform.png" width="900">
+<img src="waveform.png" width="900">
 </p>
 
 ---
