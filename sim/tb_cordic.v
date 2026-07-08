@@ -1,22 +1,4 @@
 `timescale 1ns/1ps
-
-// =============================================================================
-// Testbench : tb_cordic
-// DUT       : cordic (src/cordic.v)
-// Author    : Shiva
-// Date      : 2026-07-08
-//
-// Verifies sin / cos / tan outputs for five representative angles:
-//   Test 1 :   0°  →  cos=32767, sin=0,     tan=0
-//   Test 2 :  45°  →  cos=23170, sin=23170, tan=32768
-//   Test 3 :  30°  →  cos=28378, sin=16384, tan=18918
-//   Test 4 :  89°  →  cos=572,   sin=32762, tan=very large
-//   Test 5 : -45°  →  cos=23170, sin=-23170,tan=-32768
-//
-// All angle values are in Q1.15 fixed-point radians.
-//   Encoding: angle_bits = round( angle_rad * 2^15 )
-// =============================================================================
-
 module tb_cordic();
 
     // DUT port declarations
@@ -26,9 +8,9 @@ module tb_cordic();
     wire signed [31:0] tan_out;
     wire               valid;
 
-    // -------------------------------------------------------------------------
+  
     // Instantiate DUT
-    // -------------------------------------------------------------------------
+
     cordic uut (
         .clk    (clk),
         .rst    (rst),
@@ -40,14 +22,11 @@ module tb_cordic();
         .valid  (valid)
     );
 
-    // -------------------------------------------------------------------------
+ 
     // 100 MHz clock
-    // -------------------------------------------------------------------------
+    
     always #5 clk = ~clk;
 
-    // -------------------------------------------------------------------------
-    // Stimulus
-    // -------------------------------------------------------------------------
     initial begin
         clk   = 0;
         rst   = 1;
