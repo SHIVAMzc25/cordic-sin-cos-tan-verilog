@@ -1,39 +1,4 @@
 `timescale 1ns/1ps
-
-// =============================================================================
-// Module  : cordic
-// Project : CORDIC-based Trigonometric Engine (sin / cos / tan)
-// Target  : Xilinx Vivado (7-series / UltraScale)
-// Author  : Shiva
-// Date    : 2026-07-08
-//
-// Description:
-//   Iterative CORDIC (Coordinate Rotation Digital Computer) engine operating
-//   in rotation mode.  The input angle is supplied in Q1.15 fixed-point
-//   radians (1 sign bit, 0 integer bits, 15 fractional bits), so the
-//   representable range is ±π rad  ≈ ±1.0 in Q1.15.
-//
-//   After N = 16 iterations the module asserts `valid` for one clock cycle
-//   and presents:
-//     cos_out  – cosine  in Q1.15
-//     sin_out  – sine    in Q1.15
-//     tan_out  – tangent in Q2.15 (wider to accommodate values > 1)
-//
-// Fixed-point representation:
-//   All intermediate values are 16-bit signed Q1.15.
-//   GAIN = 1/K ≈ 0.6073  →  0.6073 × 2^15 = 19897 (stored as integer)
-//
-// CORDIC rotation recurrences (i = 0 … N-1):
-//   σᵢ = sign(Zᵢ)
-//   X[i+1] = X[i] − σᵢ · Y[i] · 2^−i
-//   Y[i+1] = Y[i] + σᵢ · X[i] · 2^−i
-//   Z[i+1] = Z[i] − σᵢ · atan(2^−i)
-//
-// Convergence:
-//   X → K·cos(θ),  Y → K·sin(θ),  Z → 0
-//   (pre-scaling X₀ by 1/K removes the K factor from the output)
-// =============================================================================
-
 module cordic #(
     parameter N = 16            // number of CORDIC iterations
 )(
@@ -47,10 +12,10 @@ module cordic #(
     output reg               valid
 );
 
-    // -------------------------------------------------------------------------
+    
     // Arc-tangent look-up table: atan(2^-i) scaled to Q1.15
     //   arctan[i] = round( atan(2^-i) * 2^15 )
-    // -------------------------------------------------------------------------
+    
     wire signed [15:0] arctan [0:15];
     assign arctan[0]  = 16'd25736;   // atan(2^0)  = 45.000°
     assign arctan[1]  = 16'd15193;   // atan(2^-1) = 26.565°
@@ -73,9 +38,9 @@ module cordic #(
     // 0.6073 × 32768 = 19897  (Q1.15 representation)
     localparam signed [15:0] GAIN = 16'd19897;
 
-    // -------------------------------------------------------------------------
+  
     // State registers
-    // -------------------------------------------------------------------------
+
     reg [4:0]  i;                    // iteration counter (0 – N)
     reg signed [15:0] x, y, z;      // CORDIC state vector
     reg busy;
@@ -86,9 +51,9 @@ module cordic #(
     reg signed [31:0] y_ext;
     reg signed [31:0] tan_div;
 
-    // -------------------------------------------------------------------------
+   
     // Main sequential logic
-    // -------------------------------------------------------------------------
+  
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             x       <= 0;
@@ -107,9 +72,9 @@ module cordic #(
         else begin
             valid <= 0;   // default: de-assert each cycle
 
-            // -----------------------------------------------------------------
+           
             // IDLE: accept new angle when en is pulsed
-            // -----------------------------------------------------------------
+         
             if (en && !busy) begin
                 x    <= GAIN;   // X₀ = 1/K  (pre-scaled for CORDIC gain)
                 y    <= 0;      // Y₀ = 0
@@ -118,9 +83,9 @@ module cordic #(
                 busy <= 1;
             end
 
-            // -----------------------------------------------------------------
+          
             // BUSY: iterate N CORDIC steps
-            // -----------------------------------------------------------------
+          
             else if (busy) begin
                 if (i < N) begin
                     // Rotation direction is determined by sign of Z
@@ -140,9 +105,9 @@ module cordic #(
                     i <= i + 1;
                 end
                 else begin
-                    // ---------------------------------------------------------
+                 
                     // DONE: latch outputs after N iterations
-                    // ---------------------------------------------------------
+                  
                     cos_out <= x;
                     sin_out <= y;
 
