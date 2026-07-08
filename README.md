@@ -182,5 +182,6 @@ CORDIC/
 ---
 
 **Author:** Shivam Rohatgi  
+**Education:** BTech in Electronics and Communication Engineering from Delhi Technological University(DTU)
 **Language:** Verilog HDL  
 **Simulation Tool:** Xilinx Vivado
